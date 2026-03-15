@@ -1,6 +1,7 @@
 package com.yorku.coordinator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,13 @@ public class LabManager {
             }
         }
         return availableList;
+    }
+    public Equipment getEquipmentById(String id) {
+    return equipmentMap.get(id); // returns the Equipment object
+    }
+
+    public Collection<Equipment> getAllEquipment() {
+    return equipmentMap.values(); // returns all Equipment objects
     }
 
     // Optional: return all equipment IDs for ComboBoxes

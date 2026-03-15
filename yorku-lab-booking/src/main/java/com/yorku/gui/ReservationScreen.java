@@ -19,63 +19,60 @@ public class ReservationScreen {
     private Stage stage;
     private User user;
     private LabManager labManager;
+    private LoginScreen loginScreen; // reference for back button
 
-    public ReservationScreen(Stage stage, User user, LabManager labManager) {
+    public ReservationScreen(Stage stage, User user, LabManager labManager, LoginScreen loginScreen) {
         this.stage = stage;
         this.user = user;
         this.labManager = labManager;
+        this.loginScreen = loginScreen;
     }
 
     public void show() {
+
         Label title = new Label("Reserve Equipment");
 
         ComboBox<String> equipmentList = new ComboBox<>();
-        refreshEquipmentList(equipmentList);
+        for (Equipment eq : labManager.getAvailableEquipment()) {
+            if (eq.isAvailable()) {
+                equipmentList.getItems().add(eq.getId() + " - " + eq.getDescription());
+            }
+        }
 
         TextField hoursField = new TextField();
         hoursField.setPromptText("Hours");
 
         Button reserveBtn = new Button("Reserve");
-
         reserveBtn.setOnAction(e -> {
-            String selected = equipmentList.getValue();
-            if (selected == null) {
-                new Alert(Alert.AlertType.ERROR, "Select equipment").show();
-                return;
-            }
+        try {
+        String selected = equipmentList.getValue();
+        if (selected == null) {
+            new Alert(Alert.AlertType.ERROR, "Select equipment").show();
+            return;
+        }
 
-            String id = selected.split(" - ")[0];
-            Equipment equipment = labManager.getEquipment(id);
+        String eqId = selected.split(" - ")[0];          // Extract ID
+        Equipment eq = labManager.getEquipmentById(eqId); // Get object
 
-            int hours;
-            try {
-                hours = Integer.parseInt(hoursField.getText());
-            } catch (NumberFormatException ex) {
-                new Alert(Alert.AlertType.ERROR, "Invalid hours").show();
-                return;
-            }
+        int hours = Integer.parseInt(hoursField.getText());
 
-            BookingFacade booking = new BookingFacade();
-            booking.reserveEquipment(user, equipment, hours);
+        BookingFacade booking = new BookingFacade();
+        booking.reserveEquipment(user, eq, hours);
 
-            new Alert(Alert.AlertType.INFORMATION, "Reservation successful!").show();
+        new Alert(Alert.AlertType.INFORMATION, "Reservation successful!").show();
 
-            // Refresh after reservation
-            refreshEquipmentList(equipmentList);
-        });
+        } catch (Exception ex) {
+        new Alert(Alert.AlertType.ERROR, "Reservation failed").show();
+        }
+    });
 
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(title, equipmentList, hoursField, reserveBtn);
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> loginScreen.show());
+
+        VBox layout = new VBox(10, title, equipmentList, hoursField, reserveBtn, backBtn);
         layout.setStyle("-fx-padding: 15;");
 
-        stage.setScene(new Scene(layout, 400, 250));
+        stage.setScene(new Scene(layout, 400, 300));
         stage.show();
-    }
-
-    private void refreshEquipmentList(ComboBox<String> comboBox) {
-        comboBox.getItems().clear();
-        for (Equipment eq : labManager.getAvailableEquipment()) {
-            comboBox.getItems().add(eq.getId() + " - " + eq.getDescription());
-        }
     }
 }

@@ -17,17 +17,18 @@ public class LabManagerScreen {
 
     private Stage stage;
     private LabManager manager;
+    private LoginScreen loginScreen; // back button
 
-    public LabManagerScreen(Stage stage, LabManager manager) {
+    public LabManagerScreen(Stage stage, LabManager manager, LoginScreen loginScreen) {
         this.stage = stage;
         this.manager = manager;
+        this.loginScreen = loginScreen;
     }
 
     public void show() {
 
         Label title = new Label("Lab Manager Dashboard: " + manager.getName());
 
-        // Input fields for adding new equipment
         TextField idField = new TextField();
         idField.setPromptText("Equipment ID");
 
@@ -38,9 +39,8 @@ public class LabManagerScreen {
         locField.setPromptText("Lab Location");
 
         Button addBtn = new Button("Add Equipment");
-
-        // Dropdown to select equipment for actions
         ComboBox<String> equipmentList = new ComboBox<>();
+
         Button enableBtn = new Button("Enable");
         Button disableBtn = new Button("Disable");
         Button maintenanceBtn = new Button("Mark for Maintenance");
@@ -51,58 +51,54 @@ public class LabManagerScreen {
             String loc = locField.getText();
 
             if (id.isEmpty() || desc.isEmpty() || loc.isEmpty()) {
-                new Alert(Alert.AlertType.ERROR, "Please fill in all fields").show();
+                new Alert(Alert.AlertType.ERROR, "Please fill all fields").show();
                 return;
             }
 
             Equipment eq = new Equipment(id, desc, loc);
             manager.addEquipment(eq);
             new Alert(Alert.AlertType.INFORMATION, "Equipment added: " + desc).show();
-
-            // Update ComboBox
-            equipmentList.getItems().add(id);
+            equipmentList.getItems().add(eq.getId() + " - " + eq.getDescription());
         });
 
         enableBtn.setOnAction(e -> {
-            String id = equipmentList.getValue();
-            if (id == null) {
-                new Alert(Alert.AlertType.ERROR, "Select equipment to enable").show();
+            String selected = equipmentList.getValue();
+            if (selected == null) {
+                new Alert(Alert.AlertType.ERROR, "Select equipment").show();
                 return;
             }
-            manager.enableEquipment(id);
-            new Alert(Alert.AlertType.INFORMATION, "Equipment enabled: " + id).show();
+            manager.enableEquipment(selected.split(" - ")[0]);
+            new Alert(Alert.AlertType.INFORMATION, "Equipment enabled").show();
         });
 
         disableBtn.setOnAction(e -> {
-            String id = equipmentList.getValue();
-            if (id == null) {
-                new Alert(Alert.AlertType.ERROR, "Select equipment to disable").show();
+            String selected = equipmentList.getValue();
+            if (selected == null) {
+                new Alert(Alert.AlertType.ERROR, "Select equipment").show();
                 return;
             }
-            manager.disableEquipment(id);
-            new Alert(Alert.AlertType.INFORMATION, "Equipment disabled: " + id).show();
+            manager.disableEquipment(selected.split(" - ")[0]);
+            new Alert(Alert.AlertType.INFORMATION, "Equipment disabled").show();
         });
 
         maintenanceBtn.setOnAction(e -> {
-            String id = equipmentList.getValue();
-            if (id == null) {
-                new Alert(Alert.AlertType.ERROR, "Select equipment to mark for maintenance").show();
+            String selected = equipmentList.getValue();
+            if (selected == null) {
+                new Alert(Alert.AlertType.ERROR, "Select equipment").show();
                 return;
             }
-            manager.markForMaintenance(id);
-            new Alert(Alert.AlertType.INFORMATION, "Equipment marked for maintenance: " + id).show();
+            manager.markForMaintenance(selected.split(" - ")[0]);
+            new Alert(Alert.AlertType.INFORMATION, "Equipment marked for maintenance").show();
         });
 
-        VBox layout = new VBox(10);
+        Button backBtn = new Button("Back");
+        backBtn.setOnAction(e -> loginScreen.show());
+
+        VBox layout = new VBox(10, title,
+                new Label("Add New Equipment:"), idField, descField, locField, addBtn,
+                new Label("Manage Equipment:"), equipmentList, enableBtn, disableBtn, maintenanceBtn,
+                backBtn);
         layout.setPadding(new Insets(15));
-        layout.getChildren().addAll(
-                title,
-                new Label("Add New Equipment:"),
-                idField, descField, locField, addBtn,
-                new Label("Manage Existing Equipment:"),
-                equipmentList,
-                enableBtn, disableBtn, maintenanceBtn
-        );
 
         stage.setScene(new Scene(layout, 400, 500));
         stage.show();

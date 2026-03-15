@@ -1,5 +1,6 @@
 package com.yorku.gui;
 
+import com.yorku.coordinator.HeadLabCoordinator;
 import com.yorku.coordinator.LabManager;
 import com.yorku.users.User;
 import com.yorku.users.UserFactory;
@@ -17,7 +18,7 @@ import javafx.stage.Stage;
 public class LoginScreen {
 
     private Stage stage;
-    private LabManager labManager; // reference to the system LabManager
+    private LabManager labManager; // reference to LabManager system
 
     public LoginScreen(Stage stage, LabManager labManager) {
         this.stage = stage;
@@ -38,7 +39,7 @@ public class LoginScreen {
         idField.setPromptText("Student/Staff ID or Certification");
 
         ComboBox<String> userType = new ComboBox<>();
-        userType.getItems().addAll("student", "faculty", "researcher", "guest", "lab_manager");
+        userType.getItems().addAll("student", "faculty", "researcher", "guest", "lab_manager", "head coordinator");
         userType.setPromptText("Select User Type");
 
         Button loginBtn = new Button("Login");
@@ -51,19 +52,24 @@ public class LoginScreen {
                     return;
                 }
 
-                if (type.equals("lab_manager")) {
-                    // Lab Manager logs in → open LabManagerScreen
-                    LabManagerScreen labScreen = new LabManagerScreen(stage, labManager);
+                if (type.equals("head coordinator")) {
+                    HeadCoordinatorApprovalScreen approvalScreen =
+                            new HeadCoordinatorApprovalScreen(stage, HeadLabCoordinator.getInstance());
+                    approvalScreen.show();
+
+                } else if (type.equals("lab_manager")) {
+                    LabManagerScreen labScreen = new LabManagerScreen(stage, labManager, this);
                     labScreen.show();
+
                 } else {
-                    // Normal user logs in → open ReservationScreen
                     User user = UserFactory.createUser(
                             type,
                             emailField.getText(),
                             passwordField.getText(),
                             idField.getText()
                     );
-                    ReservationScreen reservation = new ReservationScreen(stage, user, labManager);
+
+                    ReservationScreen reservation = new ReservationScreen(stage, user, labManager, this);
                     reservation.show();
                 }
 
