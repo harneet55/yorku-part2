@@ -1,5 +1,4 @@
 package com.yorku.gui;
-
 import com.yorku.coordinator.HeadLabCoordinator;
 import com.yorku.coordinator.LabManager;
 import com.yorku.users.User;
@@ -14,6 +13,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 
 public class LoginScreen {
 
