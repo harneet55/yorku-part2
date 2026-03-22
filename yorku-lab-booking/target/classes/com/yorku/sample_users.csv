@@ -1,7 +1,7 @@
 Name,UserType,Email,Password,ID_Certification
-Student 1,student,student1@yorku.ca,student123,10001
-Professor Jones,faculty,prof.jones@yorku.ca,profpass,FAC-202
-Researcher 1,researcher,researcher1@yorku.ca,research123,RES-55
-Guest 1,guest,guest1@gmail.com,guestpass,GUEST-001
-Lab Manager,lab_manager,manager@yorku.ca,managerpass,LAB-01
-Alice,head coordinator,Alice@yorku.ca,alicepass,HC-01
+Student 1,student,student1@yorku.ca,Stud123!@#,10001
+Professor Jones,faculty,prof.jones@yorku.ca,Prof123$Pass,FAC-202
+Researcher 1,researcher,researcher1@yorku.ca,Res123^Pass,RES-55
+Guest 1,guest,guest1@gmail.com,Guest123!@,GUEST-001
+Lab Manager,lab_manager,manager@yorku.ca,Manag123!@,LAB-01
+Alice,head coordinator,Alice@yorku.ca,Alice123!@,HC-01

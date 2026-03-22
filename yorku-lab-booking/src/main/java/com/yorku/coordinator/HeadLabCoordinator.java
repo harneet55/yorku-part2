@@ -37,7 +37,7 @@ public class HeadLabCoordinator {
         }
 
         // Validate strong password
-        if (!PasswordValidator.isStrong(user.getPassword())) {
+        if (!PasswordValidator.isValid(user.getPassword())) {
             throw new Exception("Weak password. Must include uppercase, lowercase, number, symbol.");
         }
 
